@@ -12,3 +12,11 @@ ToDo:
 - Add SNI config for dovecot when adding new domain
 - Add SNI config for EXIM when adding new domain
 - Add certificate for domain pointers
+
+scripts/update-mail-certificate.sh
+
+- Quick script to add SNI support to EXIM and Dovecot
+
+ToDo:
+
+- Integrate it with letsencrypt.sh
