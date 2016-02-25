@@ -1,4 +1,15 @@
 #!/bin/sh
+
+#Change exim.conf
+#tls_certificate = ${if exists{/etc/exim.ssl/exim.cert.${tls_sni}}{/etc/exim.ssl/exim.cert.${tls_sni}}{/etc/exim.cert}}
+#tls_privatekey = ${if exists{/etc/exim.ssl/exim.key.${tls_sni}}{/etc/exim.ssl/exim.key.${tls_sni}}{/etc/exim.key}}
+
+#Change dovecot/conf/ssl.conf
+#!include /etc/dovecot/certs/*.conf
+
+#Also change it in custombuild so that after updates it still works.
+# Copy dovecot/conf/ssl.conf custombuild/custom/dovecot/conf/ (Create dir if needed)
+
 dir=/usr/local/directadmin/data/users/
 list=domains.list
 
@@ -19,9 +30,6 @@ do
 	done < $d/$list
 done
 
-#exim.conf
-#tls_certificate = ${if exists{/etc/exim.ssl/exim.cert.${tls_sni}}{/etc/exim.ssl/exim.cert.${tls_sni}}{/etc/exim.cert}}
-#tls_privatekey = ${if exists{/etc/exim.ssl/exim.key.${tls_sni}}{/etc/exim.ssl/exim.key.${tls_sni}}{/etc/exim.key}}
 
 
 echo "Done!"
