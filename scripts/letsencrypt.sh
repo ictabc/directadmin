@@ -90,6 +90,15 @@ update_SAN_list(){
   done
 }
 
+update_pointer_SAN_list(){
+  DOMAIN_IP=`/bin/sed -n 's/www\t14400\tIN\tA\t/&/p' /var/named/${DOMAIN_POINTER}.db | /bin/awk {'print $5'}`
+  SUBDOMAINS_POINTER=($(/bin/grep -R "${DOMAIN_IP}" /var/named/${DOMAIN_POINTER}.db| /bin/sed '/www\t14400/d' | /bin/grep -v "${DOMAIN_POINTER}." | grep -v "ns1" | grep -v "ns2" | /bin/awk {'print $1'}))
+
+  for x in ${SUBDOMAINS_POINTER[@]};
+  do SAN3+=", DNS:$x.${1}";
+  done
+}
+
 ACTION=$1
 DOMAIN=$2
 if [ "${DEFAULT_KEY_SIZE}" = "" ]; then
@@ -254,6 +263,18 @@ if [ "${HOSTNAME}" -eq 0 ]; then
 		#Add all subdomains to the SAN list with same address as current domain
 		update_SAN_list "$DOMAIN"
 		SAN+=$SAN2
+#		cat $DA_USERDIR/domains/$DOMAIN.pointers
+		if [ -e $DA_USERDIR/domains/$DOMAIN.pointers ]; then
+			POINTERS=($(/bin/cat $DA_USERDIR/domains/$DOMAIN.pointers | /bin/sed "s/=alias$//"))
+			  for y in ${POINTERS[@]}; do
+			     DOMAIN_POINTER=$y
+			     echo $DOMAIN_POINTER
+			     update_pointer_SAN_list "$DOMAIN_POINTER";
+			     echo $SAN3
+			     SAN+=$SAN3
+			     SAN3=""
+			  done
+		fi
 	else
 		#We have a domain with www., drop www and add it to SAN too
 		DOMAIN2=`echo ${DOMAIN} | perl -p0 -e 's#^www.##'`
@@ -276,6 +297,9 @@ else
 fi
 
 DOMAINS="`echo ${SAN} | tr -d '\",' | perl -p0 -e 's#DNS:##g'`"
+
+#echo $SAN
+#exit
 
 #Create san_config
 #if [ -f ${SAN_CONFIG} ]; then
