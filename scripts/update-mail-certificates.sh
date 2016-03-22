@@ -3,11 +3,6 @@ dir=/usr/local/directadmin/data/users/
 list=domains.list
 
 echo -n "Updating exim certificate...."
-cp /etc/exim.cert /etc/exim.cert.old
-cp /etc/exim.key /etc/exim.key.old
-cat /usr/local/directadmin/data/users/axel/domains/ictabc.net.cert > /etc/exim.cert
-cat /usr/local/directadmin/data/users/axel/domains/ictabc.net.cacert >> /etc/exim.cert
-cat /usr/local/directadmin/data/users/axel/domains/ictabc.net.key > /etc/exim.key
 
 for d in "$dir"*
 do
